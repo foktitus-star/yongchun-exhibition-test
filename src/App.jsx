@@ -7,7 +7,9 @@ import {
   Image as ImageIcon, 
   Navigation,
   Send,
-  Info
+  Info,
+  Clock,
+  Building2
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { 
@@ -66,22 +68,28 @@ const PERSONAS = {
     title: '資深住戶：王伯伯',
     route: '活動中心 -> 巷弄老樹 -> 遺址轉角',
     story: '我在這裡住了四十年，看著圍牆一塊塊疊起。對我來說，移動不是困難，而是習慣了窄路中的人情味。',
-    color: 'bg-amber-100',
-    borderColor: 'border-amber-500'
+    color: 'bg-[#F5F0E8]',
+    borderColor: 'border-[#8B4513]',
+    accent: 'text-[#8B4513]',
+    tag: 'bg-[#8B4513]/10 text-[#8B4513]'
   },
   student: {
     title: '實習學生：小林',
     route: 'd-school -> 臨時便道 -> 生活合作宅預定地',
     story: '帶著捲尺與筆記本，我試圖在非正式聚落的紋理中，尋找社會住宅的另一種可能性。',
-    color: 'bg-blue-100',
-    borderColor: 'border-blue-500'
+    color: 'bg-[#E8F5F1]',
+    borderColor: 'border-[#1A6B5A]',
+    accent: 'text-[#1A6B5A]',
+    tag: 'bg-[#1A6B5A]/10 text-[#1A6B5A]'
   },
   outsider: {
     title: '好奇訪客：阿強',
     route: '捷運站 -> 永春街入口 -> 展場核心',
     story: '第一次踏入這裡，導航似乎失靈了。這種「迷路感」正是聚落最迷人的屏障。',
-    color: 'bg-green-100',
-    borderColor: 'border-green-500'
+    color: 'bg-[#EDE8F5]',
+    borderColor: 'border-[#5B4A8A]',
+    accent: 'text-[#5B4A8A]',
+    tag: 'bg-[#5B4A8A]/10 text-[#5B4A8A]'
   }
 };
 
@@ -181,20 +189,20 @@ const App = () => {
 
   // --- UI 子組件 ---
   const Nav = () => (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 z-50">
-      <button onClick={() => setView('landing')} className={`flex flex-col items-center ${view === 'landing' ? 'text-blue-600' : 'text-gray-400'}`}>
+    <nav className="fixed bottom-0 left-0 right-0 nav-heritage flex justify-around p-3 z-50">
+      <button onClick={() => setView('landing')} className={`flex flex-col items-center transition-colors ${view === 'landing' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
         <Info size={20} />
         <span className="text-xs mt-1">資訊</span>
       </button>
-      <button onClick={() => setView('persona')} className={`flex flex-col items-center ${view === 'persona' ? 'text-blue-600' : 'text-gray-400'}`}>
+      <button onClick={() => setView('persona')} className={`flex flex-col items-center transition-colors ${view === 'persona' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
         <User size={20} />
         <span className="text-xs mt-1">角色</span>
       </button>
-      <button onClick={() => setView('gallery')} className={`flex flex-col items-center ${view === 'gallery' ? 'text-blue-600' : 'text-gray-400'}`}>
+      <button onClick={() => setView('gallery')} className={`flex flex-col items-center transition-colors ${view === 'gallery' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
         <ImageIcon size={20} />
         <span className="text-xs mt-1">藝廊</span>
       </button>
-      <button onClick={() => setView('forum')} className={`flex flex-col items-center ${view === 'forum' ? 'text-blue-600' : 'text-gray-400'}`}>
+      <button onClick={() => setView('forum')} className={`flex flex-col items-center transition-colors ${view === 'forum' ? 'text-[#1A6B5A]' : 'text-[#5C4033]/40'}`}>
         <MessageSquare size={20} />
         <span className="text-xs mt-1">討論</span>
       </button>
@@ -202,56 +210,94 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 font-sans text-slate-800">
+    <div className="min-h-screen pb-20 text-[#2C1810]" style={{ backgroundColor: '#F5F0E8' }}>
       {/* Header */}
-      <header className="bg-white p-4 shadow-sm sticky top-0 z-40">
-        <h1 className="font-bold text-lg text-center tracking-tight">永春街：移動與聚落展覽</h1>
+      <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: 'linear-gradient(to right, rgba(139,69,19,0.08), rgba(26,107,90,0.06))', borderBottom: '1px solid rgba(139,69,19,0.1)' }}>
+        <div className="max-w-md mx-auto p-4 flex items-center justify-center gap-2">
+          <h1 className="font-serif-tc font-bold text-lg text-center tracking-wider text-gradient-heritage">永春街：移動與聚落展覽</h1>
+        </div>
       </header>
 
       <main className="max-w-md mx-auto p-4">
         
         {/* 展前資訊階段 */}
         {view === 'landing' && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-lg">
-              <h2 className="text-2xl font-bold mb-2">穿梭永春街的記憶線</h2>
-              <p className="opacity-90 mb-4">這是一個關於歷史、移動困境與未來居住想像的互動展覽。</p>
-              <div className="flex items-center gap-2 text-sm mb-1">
-                <Calendar size={16} /> 展覽期間：即將公布
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin size={16} /> 永春街活動中心 / D-School
+          <div className="space-y-5 animate-fade-in">
+            {/* Hero 主視覺卡片 */}
+            <div className="rounded-2xl overflow-hidden shadow-lg texture-overlay" style={{ background: 'linear-gradient(145deg, #2C1810 0%, #5C4033 40%, #1A6B5A 100%)' }}>
+              <div className="relative p-6 text-white z-10">
+                <p className="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-3 font-medium">互動展覽 ✦ 永春街聚落</p>
+                <h2 className="font-serif-tc text-2xl font-bold mb-2 leading-snug">穿梭永春街的<br/>記憶線</h2>
+                <div className="brick-divider my-4 opacity-30"></div>
+                <p className="text-sm opacity-80 leading-relaxed mb-5">一個關於歷史、移動困境與未來居住想像的互動展覽。<br/>從老巷弄的人情味，到都市更新的韌性想像。</p>
+                
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2 text-sm">
+                    <Calendar size={15} className="mt-0.5 opacity-70 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">5月30日 — 6月4日</p>
+                      <p className="font-medium">6月8日 — 6月14日</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 text-sm">
+                    <MapPin size={15} className="mt-0.5 opacity-70 flex-shrink-0" />
+                    <div>
+                      <p>展場A — 客家文化園區1/F驛站走廊</p>
+                      <p>展場B — 永春街299號外</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-              <h3 className="font-bold mb-3 flex items-center gap-2">
-                <Navigation size={18} className="text-blue-500" /> 參展指南
+            {/* 參展指南 */}
+            <div className="card-heritage rounded-xl p-5">
+              <h3 className="font-serif-tc font-bold mb-4 flex items-center gap-2 text-[#6B4226]">
+                <Navigation size={18} className="text-[#8B4513]" /> 參展指南
               </h3>
-              <ol className="text-sm space-y-3 text-slate-600">
-                <li className="flex gap-2">
-                  <span className="bg-blue-100 text-blue-600 w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0">1</span>
-                  從 D-School 出發，沿著指定路線進行觀察與寫生。
+              <ol className="text-sm space-y-3 text-[#5C4033]">
+                <li className="flex gap-3">
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-bold text-white" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>1</span>
+                  <span>從 D-School 出發，沿著指定路線進行觀察與寫生。</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="bg-blue-100 text-blue-600 w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0">2</span>
-                  到達現場掃描 QR Code，領取您的專屬角色身分。
+                <li className="flex gap-3">
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-bold text-white" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>2</span>
+                  <span>到達現場掃描 QR Code，領取您的專屬角色身分。</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="bg-blue-100 text-blue-600 w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0">3</span>
-                  跟隨角色視角探索聚落，並參與拼貼工作坊。
+                <li className="flex gap-3">
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-bold text-white" style={{ background: 'linear-gradient(135deg, #1A6B5A, #2D9B83)' }}>3</span>
+                  <span>跟隨角色視角探索聚落，並參與拼貼工作坊。</span>
                 </li>
               </ol>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <button onClick={() => setView('gallery')} className="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm hover:border-blue-300 transition-colors">
-                <ImageIcon className="mx-auto mb-2 text-slate-400" />
-                <span className="text-sm font-medium">觀看寫生牆</span>
+            {/* 展場資訊 */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="card-heritage rounded-xl p-4">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>
+                  <Building2 size={18} className="text-white" />
+                </div>
+                <p className="text-xs font-bold text-[#6B4226] mb-0.5">展場A</p>
+                <p className="text-[10px] text-[#5C4033]/70 leading-tight">客家文化園區<br/>1/F驛站走廊</p>
+              </div>
+              <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #E8F5F1, #D0EDE5)' , border: '1px solid rgba(26,107,90,0.15)' }}>
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2" style={{ background: 'linear-gradient(135deg, #1A6B5A, #2D9B83)' }}>
+                  <MapPin size={18} className="text-white" />
+                </div>
+                <p className="text-xs font-bold text-[#1A6B5A] mb-0.5">展場B</p>
+                <p className="text-[10px] text-[#1A6B5A]/70 leading-tight">永春街299號外<br/>實地聚落現場</p>
+              </div>
+            </div>
+
+            {/* 快捷按鈕 */}
+            <div className="grid grid-cols-2 gap-3">
+              <button onClick={() => setView('gallery')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group">
+                <ImageIcon className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
+                <span className="text-sm font-medium text-[#6B4226]">觀看寫生牆</span>
               </button>
-              <button onClick={() => setView('forum')} className="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm hover:border-blue-300 transition-colors">
-                <MessageSquare className="mx-auto mb-2 text-slate-400" />
-                <span className="text-sm font-medium">參與未來討論</span>
+              <button onClick={() => setView('forum')} className="p-4 rounded-xl text-center hover:shadow-md transition-all group" style={{ background: 'linear-gradient(135deg, #E8F5F1, #D0EDE5)', border: '1px solid rgba(26,107,90,0.15)' }}>
+                <MessageSquare className="mx-auto mb-2 text-[#1A6B5A]/50 group-hover:text-[#1A6B5A] transition-colors" />
+                <span className="text-sm font-medium text-[#1A6B5A]">參與未來討論</span>
               </button>
             </div>
           </div>
@@ -261,47 +307,47 @@ const App = () => {
         {view === 'persona' && (
           <div className="animate-fade-in space-y-4">
             {!activePersona ? (
-              <div className="text-center py-10 bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-                <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <User className="text-slate-400" />
+              <div className="text-center py-10 card-heritage rounded-2xl p-8">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'linear-gradient(135deg, #E8DFD0, #F5F0E8)', border: '2px solid rgba(139,69,19,0.2)' }}>
+                  <User className="text-[#8B4513]" />
                 </div>
-                <h3 className="font-bold text-lg">準備好開始您的旅程了嗎？</h3>
-                <p className="text-slate-500 text-sm mt-2 mb-6">請掃描展場各處的 QR Code 以領取身分。</p>
-                <div className="space-y-2">
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">快速預覽模式</p>
+                <h3 className="font-serif-tc font-bold text-lg text-[#2C1810]">準備好開始您的旅程了嗎？</h3>
+                <p className="text-[#5C4033]/60 text-sm mt-2 mb-6">請掃描展場各處的 QR Code 以領取身分。</p>
+                <div className="space-y-3">
+                  <p className="text-[10px] text-[#8B4513]/50 uppercase tracking-widest font-bold">快速預覽模式</p>
                   <div className="flex flex-wrap justify-center gap-2">
-                    <button onClick={() => setActivePersona(PERSONAS.resident)} className="px-3 py-1 bg-amber-50 text-amber-700 text-xs rounded-full border border-amber-200">王伯伯</button>
-                    <button onClick={() => setActivePersona(PERSONAS.student)} className="px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200">小林</button>
-                    <button onClick={() => setActivePersona(PERSONAS.outsider)} className="px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full border border-green-200">阿強</button>
+                    <button onClick={() => setActivePersona(PERSONAS.resident)} className="px-4 py-1.5 bg-[#8B4513]/10 text-[#8B4513] text-xs rounded-full border border-[#8B4513]/20 hover:bg-[#8B4513]/20 transition-colors">王伯伯</button>
+                    <button onClick={() => setActivePersona(PERSONAS.student)} className="px-4 py-1.5 bg-[#1A6B5A]/10 text-[#1A6B5A] text-xs rounded-full border border-[#1A6B5A]/20 hover:bg-[#1A6B5A]/20 transition-colors">小林</button>
+                    <button onClick={() => setActivePersona(PERSONAS.outsider)} className="px-4 py-1.5 bg-[#5B4A8A]/10 text-[#5B4A8A] text-xs rounded-full border border-[#5B4A8A]/20 hover:bg-[#5B4A8A]/20 transition-colors">阿強</button>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className={`rounded-2xl border-2 ${activePersona.borderColor} overflow-hidden shadow-md bg-white animate-fade-in`}>
+              <div className={`rounded-2xl border-2 ${activePersona.borderColor} overflow-hidden shadow-md animate-fade-in`} style={{ backgroundColor: '#FFFCF7' }}>
                 <div className={`${activePersona.color} p-6`}>
                   <div className="flex justify-between items-start mb-4">
-                    <span className="bg-white/80 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider text-slate-600">已解鎖角色</span>
-                    <button onClick={() => setActivePersona(null)} className="text-slate-400 hover:text-slate-600 text-sm font-medium">切換身分</button>
+                    <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider ${activePersona.tag}`}>已解鎖角色</span>
+                    <button onClick={() => setActivePersona(null)} className="text-[#5C4033]/50 hover:text-[#5C4033] text-sm font-medium transition-colors">切換身分</button>
                   </div>
-                  <h2 className="text-2xl font-black mb-2">{activePersona.title}</h2>
-                  <p className="text-sm leading-relaxed italic text-slate-700">"{activePersona.story}"</p>
+                  <h2 className={`font-serif-tc text-2xl font-black mb-2 ${activePersona.accent}`}>{activePersona.title}</h2>
+                  <p className="text-sm leading-relaxed italic text-[#5C4033]/80">「{activePersona.story}」</p>
                 </div>
                 <div className="p-6 space-y-6">
                   <section>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase mb-3 flex items-center gap-1">
+                    <h4 className="text-xs font-bold text-[#5C4033]/50 uppercase mb-3 flex items-center gap-1">
                       <Navigation size={14} /> 專屬移動路線
                     </h4>
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                    <div className="p-4 rounded-xl flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #F5F0E8, #E8DFD0)', border: '1px solid rgba(139,69,19,0.1)' }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>
                         <MapPin size={16} />
                       </div>
-                      <p className="text-sm font-bold text-blue-900 leading-tight">{activePersona.route}</p>
+                      <p className="text-sm font-bold text-[#6B4226] leading-tight">{activePersona.route}</p>
                     </div>
                   </section>
                   
-                  <div className="p-10 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-sm text-slate-400 text-center">
+                  <div className="p-10 rounded-2xl border border-dashed text-sm text-center" style={{ borderColor: 'rgba(139,69,19,0.2)', backgroundColor: '#F5F0E8', color: '#5C4033' }}>
                     <Navigation className="mx-auto mb-2 opacity-20" size={32} />
-                    互動地圖載入中...
+                    <span className="opacity-50">互動地圖載入中...</span>
                   </div>
                 </div>
               </div>
@@ -312,30 +358,30 @@ const App = () => {
         {/* 寫生藝廊階段 */}
         {view === 'gallery' && (
           <div className="animate-fade-in space-y-4">
-            <h2 className="text-xl font-bold px-2">共創寫生牆</h2>
-            <p className="text-sm text-slate-500 px-2 mb-4">這裡展示了觀眾在移動過程中的田野記錄與畫作。</p>
+            <h2 className="font-serif-tc text-xl font-bold px-2 text-[#2C1810]">共創寫生牆</h2>
+            <p className="text-sm text-[#5C4033]/60 px-2 mb-4">這裡展示了觀眾在移動過程中的田野記錄與畫作。</p>
             
             <div className="grid grid-cols-2 gap-3">
               {artworks.length > 0 ? artworks.map(art => (
-                <div key={art.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200">
-                  <div className="aspect-square bg-slate-100 overflow-hidden">
-                    <img src={art.url} alt={art.title} className="object-cover w-full h-full hover:scale-105 transition-transform" />
+                <div key={art.id} className="card-heritage rounded-xl overflow-hidden group">
+                  <div className="aspect-square bg-[#E8DFD0] overflow-hidden">
+                    <img src={art.url} alt={art.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
                   </div>
-                  <div className="p-2 bg-white">
-                    <p className="text-xs font-bold truncate">{art.title || '無標題'}</p>
-                    <p className="text-[10px] text-slate-400">by {art.author || '匿名觀者'}</p>
+                  <div className="p-2.5">
+                    <p className="text-xs font-bold truncate text-[#2C1810]">{art.title || '無標題'}</p>
+                    <p className="text-[10px] text-[#8B4513]/50">by {art.author || '匿名觀者'}</p>
                   </div>
                 </div>
               )) : (
                 <>
                   {[1,2,3,4].map(i => (
-                    <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 p-4">
-                      <div className="aspect-square bg-slate-50 rounded-lg mb-2 flex flex-col items-center justify-center text-slate-300 border border-dashed">
+                    <div key={i} className="card-heritage rounded-xl overflow-hidden p-4">
+                      <div className="aspect-square rounded-lg mb-2 flex flex-col items-center justify-center text-[#8B4513]/30 border border-dashed border-[#8B4513]/20" style={{ backgroundColor: '#F5F0E8' }}>
                         <ImageIcon size={24} />
                         <span className="text-[10px] mt-1">作品整理中</span>
                       </div>
-                      <div className="h-3 bg-slate-100 rounded w-3/4 mb-1"></div>
-                      <div className="h-2 bg-slate-50 rounded w-1/2"></div>
+                      <div className="h-3 rounded w-3/4 mb-1" style={{ backgroundColor: '#E8DFD0' }}></div>
+                      <div className="h-2 rounded w-1/2" style={{ backgroundColor: '#F5F0E8' }}></div>
                     </div>
                   ))}
                 </>
@@ -348,40 +394,40 @@ const App = () => {
         {view === 'forum' && (
           <div className="animate-fade-in flex flex-col h-[75vh]">
             <div className="px-2 mb-4">
-              <h2 className="text-xl font-bold">聚落想像對話框</h2>
-              <p className="text-sm text-slate-500 mt-1">關於這裡的未來，你希望留下什麼？</p>
+              <h2 className="font-serif-tc text-xl font-bold text-[#1A6B5A]">聚落想像對話框</h2>
+              <p className="text-sm text-[#5C4033]/60 mt-1">關於這裡的未來，你希望留下什麼？</p>
             </div>
             
             <div className="flex-1 overflow-y-auto space-y-3 px-2 pb-4">
               {messages.length > 0 ? messages.map(msg => (
-                <div key={msg.id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 animate-fade-in">
-                  <p className="text-sm text-slate-700 leading-relaxed">{msg.text}</p>
+                <div key={msg.id} className="card-heritage p-4 rounded-2xl animate-fade-in">
+                  <p className="text-sm text-[#2C1810] leading-relaxed">{msg.text}</p>
                   <div className="flex justify-between items-center mt-3">
-                    <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1A6B5A]/10 text-[#1A6B5A]">
                       ID: {msg.authorId ? msg.authorId.substring(0, 6) : 'Anonymous'}
                     </span>
-                    <span className="text-[10px] text-slate-300">
+                    <span className="text-[10px] text-[#5C4033]/30">
                       {new Date(msg.timestamp).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
               )) : (
-                <div className="text-center py-20 text-slate-300 text-sm">暫無討論，成為第一個分享想法的人吧！</div>
+                <div className="text-center py-20 text-[#5C4033]/30 text-sm">暫無討論，成為第一個分享想法的人吧！</div>
               )}
             </div>
 
-            <div className="sticky bottom-4 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-slate-200 flex items-center gap-2 m-2">
+            <div className="sticky bottom-4 p-2 rounded-2xl shadow-lg flex items-center gap-2 m-2" style={{ background: 'rgba(245,240,232,0.9)', backdropFilter: 'blur(12px)', border: '1px solid rgba(26,107,90,0.15)' }}>
               <input 
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="輸入您的觀點..."
-                className="flex-1 bg-transparent border-none focus:ring-0 text-sm p-3"
+                className="flex-1 bg-transparent border-none text-sm p-3 outline-none text-[#2C1810] placeholder-[#5C4033]/30"
                 onKeyPress={(e) => e.key === 'Enter' && postMessage()}
               />
               <button 
                 onClick={postMessage} 
                 disabled={!newMessage.trim()}
-                className={`p-3 rounded-xl shadow-md transition-all ${newMessage.trim() ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-200 text-slate-400'}`}
+                className={`p-3 rounded-xl shadow-md transition-all ${newMessage.trim() ? 'btn-teal' : 'bg-[#E8DFD0] text-[#5C4033]/30'}`}
               >
                 <Send size={18} />
               </button>
@@ -392,7 +438,6 @@ const App = () => {
       </main>
 
       <Nav />
-
 
     </div>
   );
