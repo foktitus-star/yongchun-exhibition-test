@@ -6,7 +6,8 @@ import {
   MessageSquare, 
   Image as ImageIcon, 
   Navigation,
-  Send
+  Send,
+  Info
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { 
@@ -22,8 +23,18 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 
+// --- 模擬預覽資料 (當 Firebase 尚未設定時顯示) ---
+const MOCK_MESSAGES = [
+  { id: 'm1', text: '這裡的巷弄很有味道，希望能保留這份安靜。', authorId: 'user_123', timestamp: Date.now() - 86400000 },
+  { id: 'm2', text: '移動路線的設計很有趣，尤其是老樹那個點。', authorId: 'user_456', timestamp: Date.now() - 3600000 },
+];
+
+const MOCK_ARTWORKS = [
+  { id: 'a1', title: '老樹下的午後', author: '小林', url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&q=80' },
+  { id: 'a2', title: '紅磚牆的記憶', author: '阿強', url: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400&q=80' },
+];
+
 // --- Firebase 配置與初始化 ---
-// ⚠️ 請在這裡替換為您真實的 Firebase 專案設定
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "your-project.firebaseapp.com",
@@ -33,13 +44,18 @@ const firebaseConfig = {
   appId: "1:123456789:web:abcdef123456"
 };
 
+// 檢查是否為真實的 Config
+const isFirebaseSetup = firebaseConfig.apiKey !== "YOUR_API_KEY";
+
 let app, auth, db;
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-} catch (error) {
-  console.warn("Firebase尚未正確設定，這可能會導致資料庫與驗證功能無法運行：", error);
+if (isFirebaseSetup) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (error) {
+    console.warn("Firebase 初始化失敗：", error);
+  }
 }
 
 const appId = 'yongchun-street-project';
@@ -71,15 +87,15 @@ const PERSONAS = {
 
 const App = () => {
   const [view, setView] = useState('landing'); // landing, persona, gallery, forum
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(isFirebaseSetup ? null : { uid: 'guest-preview' });
   const [activePersona, setActivePersona] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(MOCK_MESSAGES);
   const [newMessage, setNewMessage] = useState('');
-  const [artworks, setArtworks] = useState([]);
+  const [artworks, setArtworks] = useState(MOCK_ARTWORKS);
 
   // 1. 初始化 Auth
   useEffect(() => {
-    if (!auth) return;
+    if (!auth || !isFirebaseSetup) return;
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -98,7 +114,7 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  // 2. 處理 URL 參數 (現場掃描 QR Code 觸發角色)
+  // 2. 處理 URL 參數
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const role = params.get('role');
@@ -110,19 +126,20 @@ const App = () => {
 
   // 3. 獲取討論版資料
   useEffect(() => {
-    if (!user || !db) return;
+    if (!user || !db || !isFirebaseSetup) return;
 
     // 獲取評論
     const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
     const unsubscribeComments = onSnapshot(commentsRef, (snapshot) => {
+      if (snapshot.empty) return;
       const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // 在前端排序：最新的在上面
       setMessages(msgs.sort((a, b) => b.timestamp - a.timestamp));
     }, (err) => console.error("Firestore comments error:", err));
 
     // 獲取寫生作品
     const galleryRef = collection(db, 'artifacts', appId, 'public', 'data', 'gallery');
     const unsubscribeGallery = onSnapshot(galleryRef, (snapshot) => {
+      if (snapshot.empty) return;
       const arts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setArtworks(arts);
     }, (err) => console.error("Firestore gallery error:", err));
@@ -134,7 +151,21 @@ const App = () => {
   }, [user]);
 
   const postMessage = async () => {
-    if (!newMessage.trim() || !user || !db) return;
+    if (!newMessage.trim() || !user) return;
+    
+    // 如果沒連上 Firebase，僅在本地模擬新增
+    if (!isFirebaseSetup) {
+      const mockMsg = {
+        id: Date.now().toString(),
+        text: newMessage,
+        authorId: user.uid,
+        timestamp: Date.now()
+      };
+      setMessages([mockMsg, ...messages]);
+      setNewMessage('');
+      return;
+    }
+
     try {
       await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), {
         text: newMessage,
@@ -146,6 +177,7 @@ const App = () => {
       console.error("Failed to post message:", err);
     }
   };
+
 
   // --- UI 子組件 ---
   const Nav = () => (
