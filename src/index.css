@@ -1,16 +1,165 @@
 @import "tailwindcss";
 
+/* ===== 展覽主題色彩系統 ===== */
+:root {
+  /* 歷史感：老台北磚紅、土壤、舊紙 */
+  --brick: #8B4513;
+  --brick-light: #C4956A;
+  --earth: #6B4226;
+  --parchment: #F5F0E8;
+  --parchment-dark: #E8DFD0;
+  --ink: #2C1810;
+  --ink-light: #5C4033;
+
+  /* 未來感：都市更新的韌性藍綠 */
+  --teal: #1A6B5A;
+  --teal-light: #2D9B83;
+  --teal-glow: #3ECFB0;
+  --slate-modern: #1E293B;
+
+  /* 過渡色：連結過去與未來 */
+  --amber-warm: #D4A76A;
+  --amber-glow: #E8C88A;
+  --rust: #A0522D;
+}
+
+/* ===== 全域基底 ===== */
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background-color: var(--parchment);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif-tc {
+  font-family: 'Noto Serif TC', serif;
+}
+
+/* ===== 動畫系統 ===== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+@keyframes fadeInSlow {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+@keyframes grainDrift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(1px, -1px); }
+  75% { transform: translate(-1px, 2px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.animate-fade-in-slow {
+  animation: fadeInSlow 0.8s ease-out forwards;
+}
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ===== 紋理覆蓋層（老紙質感） ===== */
+.texture-overlay {
+  position: relative;
+}
+.texture-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  animation: grainDrift 8s ease-in-out infinite;
+}
+
+/* ===== 主題卡片樣式 ===== */
+.card-heritage {
+  background: linear-gradient(135deg, #F5F0E8 0%, #E8DFD0 100%);
+  border: 1px solid rgba(139, 69, 19, 0.15);
+  box-shadow: 0 2px 12px rgba(107, 66, 38, 0.08);
+}
+
+.card-future {
+  background: linear-gradient(135deg, #1A6B5A 0%, #1E3A34 100%);
+  color: white;
+  box-shadow: 0 4px 24px rgba(26, 107, 90, 0.25);
+}
+
+/* ===== 磚紋裝飾線 ===== */
+.brick-divider {
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--brick-light) 0px,
+    var(--brick-light) 12px,
+    transparent 12px,
+    transparent 15px
+  );
+  opacity: 0.5;
+}
+
+/* ===== 底部導覽列 ===== */
+.nav-heritage {
+  background: linear-gradient(to top, rgba(245, 240, 232, 0.97), rgba(245, 240, 232, 0.92));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(139, 69, 19, 0.12);
+}
+
+/* ===== 捲軸美化 ===== */
 ::-webkit-scrollbar {
   width: 4px;
 }
+::-webkit-scrollbar-track {
+  background: var(--parchment);
+}
 ::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: var(--brick-light);
   border-radius: 10px;
+}
+
+/* ===== 按鈕漸變效果 ===== */
+.btn-teal {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+  color: white;
+  transition: all 0.3s ease;
+}
+.btn-teal:hover {
+  box-shadow: 0 4px 16px rgba(26, 107, 90, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ===== 討論版輸入框 ===== */
+.input-heritage {
+  background: rgba(245, 240, 232, 0.6);
+  border: 1px solid rgba(139, 69, 19, 0.15);
+}
+.input-heritage:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.1);
+}
+
+/* ===== 文字漸層效果 ===== */
+.text-gradient-heritage {
+  background: linear-gradient(135deg, var(--earth) 0%, var(--brick) 50%, var(--teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
