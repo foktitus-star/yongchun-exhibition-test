@@ -9,7 +9,10 @@ import {
   Send,
   Info,
   Clock,
-  Building2
+  Building2,
+  History,
+  ArrowLeftRight,
+  ChevronRight
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { 
@@ -94,12 +97,15 @@ const PERSONAS = {
 };
 
 const App = () => {
-  const [view, setView] = useState('landing'); // landing, persona, gallery, forum
+  const [view, setView] = useState('landing'); // landing, persona, gallery, forum, compare
   const [user, setUser] = useState(isFirebaseSetup ? null : { uid: 'guest-preview' });
   const [activePersona, setActivePersona] = useState(null);
   const [messages, setMessages] = useState(MOCK_MESSAGES);
   const [newMessage, setNewMessage] = useState('');
   const [artworks, setArtworks] = useState(MOCK_ARTWORKS);
+  
+  // 新增：控制時間滑桿的狀態 (0 到 100)
+  const [sliderPosition, setSliderPosition] = useState(50);
 
   // 1. 初始化 Auth
   useEffect(() => {
@@ -192,19 +198,24 @@ const App = () => {
     <nav className="fixed bottom-0 left-0 right-0 nav-heritage flex justify-around p-3 z-50">
       <button onClick={() => setView('landing')} className={`flex flex-col items-center transition-colors ${view === 'landing' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
         <Info size={20} />
-        <span className="text-xs mt-1">資訊</span>
+        <span className="text-[10px] mt-1 font-medium">資訊</span>
       </button>
       <button onClick={() => setView('persona')} className={`flex flex-col items-center transition-colors ${view === 'persona' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
         <User size={20} />
-        <span className="text-xs mt-1">角色</span>
+        <span className="text-[10px] mt-1 font-medium">角色</span>
+      </button>
+      {/* 新增：時空對比按鈕 */}
+      <button onClick={() => setView('compare')} className={`flex flex-col items-center transition-colors ${view === 'compare' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
+        <History size={20} />
+        <span className="text-[10px] mt-1 font-medium">時空</span>
       </button>
       <button onClick={() => setView('gallery')} className={`flex flex-col items-center transition-colors ${view === 'gallery' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
         <ImageIcon size={20} />
-        <span className="text-xs mt-1">藝廊</span>
+        <span className="text-[10px] mt-1 font-medium">藝廊</span>
       </button>
       <button onClick={() => setView('forum')} className={`flex flex-col items-center transition-colors ${view === 'forum' ? 'text-[#1A6B5A]' : 'text-[#5C4033]/40'}`}>
         <MessageSquare size={20} />
-        <span className="text-xs mt-1">討論</span>
+        <span className="text-[10px] mt-1 font-medium">討論</span>
       </button>
     </nav>
   );
@@ -291,13 +302,98 @@ const App = () => {
 
             {/* 快捷按鈕 */}
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => setView('gallery')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group">
+              <button onClick={() => setView('compare')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group border-[#8B4513]/20">
+                <History className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
+                <span className="text-sm font-bold text-[#6B4226]">探索時空對比</span>
+                <p className="text-[10px] text-[#5C4033]/40 mt-0.5">現況與合作宅提案</p>
+              </button>
+              <button onClick={() => setView('persona')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group border-[#8B4513]/20">
+                <User className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
+                <span className="text-sm font-bold text-[#6B4226]">切換觀展角色</span>
+                <p className="text-[10px] text-[#5C4033]/40 mt-0.5">開啟專屬路線</p>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button onClick={() => setView('gallery')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group border-[#8B4513]/20">
                 <ImageIcon className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
                 <span className="text-sm font-medium text-[#6B4226]">觀看寫生牆</span>
               </button>
               <button onClick={() => setView('forum')} className="p-4 rounded-xl text-center hover:shadow-md transition-all group" style={{ background: 'linear-gradient(135deg, #E8F5F1, #D0EDE5)', border: '1px solid rgba(26,107,90,0.15)' }}>
                 <MessageSquare className="mx-auto mb-2 text-[#1A6B5A]/50 group-hover:text-[#1A6B5A] transition-colors" />
                 <span className="text-sm font-medium text-[#1A6B5A]">參與未來討論</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* --- 新增：時空對比 (Before/After Slider) 階段 --- */}
+        {view === 'compare' && (
+          <div className="animate-fade-in space-y-6">
+            <div className="px-2">
+              <h2 className="font-serif-tc text-xl font-bold text-[#2C1810]">聚落的過去與未來</h2>
+              <p className="text-sm text-[#5C4033]/60 mt-1">左右滑動，對比永春街現狀與生活合作宅提案的可能性。</p>
+            </div>
+
+            {/* 滑桿主要容器 */}
+            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-[#8B4513]/10 bg-[#E8DFD0] group">
+              
+              {/* 底層圖片 (After / 未來提案) */}
+              <img 
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop" 
+                alt="生活合作宅提案" 
+                className="absolute inset-0 w-full h-full object-cover"
+                draggable="false"
+              />
+              
+              {/* 頂層圖片 (Before / 現狀) */}
+              <img 
+                src="https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=1000&auto=format&fit=crop" 
+                alt="永春街現狀" 
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+                draggable="false"
+              />
+
+              {/* 分隔線與拖曳按鈕 */}
+              <div 
+                className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_15px_rgba(0,0,0,0.4)] pointer-events-none z-10"
+                style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+              >
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-2xl flex items-center justify-center border-4 border-[#F5F0E8]">
+                  <ArrowLeftRight size={18} className="text-[#8B4513]" />
+                </div>
+              </div>
+
+              {/* 隱形的 Range Input */}
+              <input 
+                type="range" 
+                min="0" max="100" 
+                value={sliderPosition} 
+                onChange={(e) => setSliderPosition(e.target.value)}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
+                aria-label="調整時間軸"
+              />
+              
+              {/* 標籤標示 */}
+              <div className="absolute bottom-4 left-4 bg-[#8B4513]/80 text-[#F5F0E8] text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md z-10 pointer-events-none font-bold tracking-widest">
+                2024 現狀
+              </div>
+              <div className="absolute bottom-4 right-4 bg-[#1A6B5A]/80 text-[#E8F5F1] text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md z-10 pointer-events-none font-bold tracking-widest">
+                未來合作宅
+              </div>
+            </div>
+
+            {/* 說明文字 */}
+            <div className="card-heritage p-5 rounded-2xl shadow-sm border-[#8B4513]/10">
+              <h3 className="font-serif-tc font-bold text-sm mb-2 text-[#8B4513] flex items-center gap-2">
+                <Building2 size={16} /> 案例分析：生活合作宅
+              </h3>
+              <p className="text-xs text-[#5C4033]/80 leading-relaxed mb-4">
+                透過「混合收入居住模式」，試圖在不抹除原有聚落紋理的情況下，植入新型態的公共空間。對比現狀的擁擠與移動困境，未來的設計是否能帶來更好的居住適應？
+              </p>
+              <button onClick={() => setView('forum')} className="w-full py-3 rounded-xl bg-[#1A6B5A]/10 text-[#1A6B5A] text-xs font-bold flex items-center justify-center gap-1 hover:bg-[#1A6B5A]/20 transition-colors">
+                前往討論版分享你的看法 <ChevronRight size={14} />
               </button>
             </div>
           </div>
