@@ -250,38 +250,45 @@ const App = () => {
 
   // --- UI 子組件 ---
   const Nav = () => (
-    <nav className="fixed bottom-0 left-0 right-0 nav-heritage flex justify-around p-3 z-50">
-      <button onClick={() => setView('landing')} className={`flex flex-col items-center transition-colors ${view === 'landing' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
+    <nav className="fixed bottom-0 left-0 right-0 nav-bp flex justify-around p-3 z-50">
+      <button onClick={() => setView('landing')} className={`flex flex-col items-center transition-colors ${view === 'landing' ? 'text-[#1C3D78]' : 'text-[#1C3D78]/35'}`}>
         <Info size={20} />
-        <span className="text-[10px] mt-1 font-medium">資訊</span>
+        <span className="text-[10px] mt-1 font-mono">資訊</span>
       </button>
-      <button onClick={() => setView('persona')} className={`flex flex-col items-center transition-colors ${view === 'persona' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
+      <button onClick={() => setView('persona')} className={`flex flex-col items-center transition-colors ${view === 'persona' ? 'text-[#1C3D78]' : 'text-[#1C3D78]/35'}`}>
         <User size={20} />
-        <span className="text-[10px] mt-1 font-medium">角色</span>
+        <span className="text-[10px] mt-1 font-mono">鑑識</span>
       </button>
-      {/* 新增：時空對比按鈕 */}
-      <button onClick={() => setView('compare')} className={`flex flex-col items-center transition-colors ${view === 'compare' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
+      <button onClick={() => setView('compare')} className={`flex flex-col items-center transition-colors ${view === 'compare' ? 'text-[#1C3D78]' : 'text-[#1C3D78]/35'}`}>
         <History size={20} />
-        <span className="text-[10px] mt-1 font-medium">時空</span>
+        <span className="text-[10px] mt-1 font-mono">時空</span>
       </button>
-      <button onClick={() => setView('gallery')} className={`flex flex-col items-center transition-colors ${view === 'gallery' ? 'text-[#8B4513]' : 'text-[#5C4033]/40'}`}>
+      <button onClick={() => setView('gallery')} className={`flex flex-col items-center transition-colors ${view === 'gallery' ? 'text-[#1C3D78]' : 'text-[#1C3D78]/35'}`}>
         <ImageIcon size={20} />
-        <span className="text-[10px] mt-1 font-medium">藝廊</span>
+        <span className="text-[10px] mt-1 font-mono">藝廊</span>
       </button>
-      <button onClick={() => setView('forum')} className={`flex flex-col items-center transition-colors ${view === 'forum' ? 'text-[#1A6B5A]' : 'text-[#5C4033]/40'}`}>
+      <button onClick={() => setView('forum')} className={`flex flex-col items-center transition-colors ${view === 'forum' ? 'text-[#1C3D78]' : 'text-[#1C3D78]/35'}`}>
         <MessageSquare size={20} />
-        <span className="text-[10px] mt-1 font-medium">討論</span>
+        <span className="text-[10px] mt-1 font-mono">回報</span>
       </button>
     </nav>
   );
 
   return (
-    <div className="min-h-screen pb-20 text-[#2C1810]" style={{ backgroundColor: '#F5F0E8' }}>
+    <div className="min-h-screen pb-20" style={{ backgroundColor: '#C5BFAA', color: '#1C3D78' }}>
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: 'linear-gradient(to right, rgba(139,69,19,0.08), rgba(26,107,90,0.06))', borderBottom: '1px solid rgba(139,69,19,0.1)' }}>
-        <div className="max-w-md mx-auto p-4 flex items-center justify-center gap-2">
-          <h1 className="font-serif-tc font-bold text-lg text-center tracking-wider text-gradient-heritage">永春街：移動與聚落展覽</h1>
+      <header className="header-bp sticky top-0 z-40">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-[9px] font-mono text-[#1C3D78]/50 uppercase tracking-[0.25em]">CASE NO.299-YS // YONGCHUN ST.</span>
+            <h1 className="font-display-tc text-base font-black text-[#1C3D78] tracking-tight leading-tight">299 失蹤計畫</h1>
+          </div>
+          <div className="text-right">
+            <div className="barcode-deco w-16 h-4 mb-0.5" />
+            <span className="text-[8px] font-mono text-[#1C3D78]/40 uppercase tracking-widest">SIGNAL: WEAK</span>
+          </div>
         </div>
+        <div className="signal-divider" />
       </header>
 
       <main className="max-w-md mx-auto p-4">
@@ -290,93 +297,76 @@ const App = () => {
         {view === 'landing' && (
           <div className="space-y-5 animate-fade-in">
             {/* Hero 主視覺卡片 */}
-            <div className="rounded-2xl overflow-hidden shadow-lg texture-overlay" style={{ background: 'linear-gradient(145deg, #2C1810 0%, #5C4033 40%, #1A6B5A 100%)' }}>
-              <div className="relative p-6 text-white z-10">
-                <p className="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-3 font-medium">互動展覽 ✦ 永春街聚落</p>
-                <h2 className="font-serif-tc text-2xl font-bold mb-2 leading-snug">穿梭永春街的<br/>記憶線</h2>
-                <div className="brick-divider my-4 opacity-30"></div>
-                <p className="text-sm opacity-80 leading-relaxed mb-5">一個關於歷史、移動困境與未來居住想像的互動展覽。<br/>從老巷弄的人情味，到都市更新的韌性想像。</p>
-                
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2 text-sm">
-                    <Calendar size={15} className="mt-0.5 opacity-70 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">5月30日 — 6月4日</p>
-                      <p className="font-medium">6月8日 — 6月14日</p>
-                    </div>
+            <div className="card-bp rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(145deg, #1C3D78 0%, #12213F 100%)' }}>
+              <div className="p-6 text-[#D4CFBC]">
+                <p className="text-[9px] font-mono uppercase tracking-[0.35em] opacity-50 mb-3">DATA_299-YS // YONGCHUN ST. TAIPEI CITY</p>
+                <h2 className="font-display-tc text-3xl font-black leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>299<br/>失蹤計畫</h2>
+                <p className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-4">299 MISSING PROJECT</p>
+                <div className="signal-divider my-4 opacity-40" />
+                <p className="text-sm opacity-75 leading-relaxed mb-5 font-mono">永春街301戶，其中299戶為達建。<br/>面對將至的都更，這299戶將何去何從？</p>
+                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                  <div className="card-data rounded-lg p-3">
+                    <div className="flex items-center gap-1.5 mb-2 opacity-60"><Calendar size={12}/><span className="uppercase tracking-widest text-[9px]">展期</span></div>
+                    <p className="font-bold text-[#D4CFBC]">5.30 — 6.04</p>
+                    <p className="font-bold text-[#D4CFBC]">6.08 — 6.14</p>
                   </div>
-                  <div className="flex items-start gap-2 text-sm">
-                    <MapPin size={15} className="mt-0.5 opacity-70 flex-shrink-0" />
-                    <div>
-                      <p>展場A — 客家文化園區1/F驛站走廊</p>
-                      <p>展場B — 永春街299號外</p>
-                    </div>
+                  <div className="card-data rounded-lg p-3">
+                    <div className="flex items-center gap-1.5 mb-2 opacity-60"><MapPin size={12}/><span className="uppercase tracking-widest text-[9px]">展場</span></div>
+                    <p className="opacity-80">展場A：客家文化園區</p>
+                    <p className="opacity-80">展場B：永春街299號外</p>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* 數據面板 */}
+            <div className="card-bp rounded-xl p-5">
+              <p className="text-[9px] font-mono uppercase tracking-[0.25em] text-[#1C3D78]/50 mb-4">// CASE_DATA LOG</p>
+              <div className="grid grid-cols-3 gap-3 text-center font-mono">
+                <div><p className="text-2xl font-black text-[#1C3D78]">301</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">TOTAL<br/>HOUSEHOLDS</p></div>
+                <div><p className="text-2xl font-black text-[#1C3D78]">299</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">ILLEGAL<br/>STRUCTURES</p></div>
+                <div><p className="text-2xl font-black text-[#E8873A]">?</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">WHERE<br/>WILL THEY GO</p></div>
               </div>
             </div>
 
             {/* 參展指南 */}
-            <div className="card-heritage rounded-xl p-5">
-              <h3 className="font-serif-tc font-bold mb-4 flex items-center gap-2 text-[#6B4226]">
-                <Navigation size={18} className="text-[#8B4513]" /> 參展指南
-              </h3>
-              <ol className="text-sm space-y-3 text-[#5C4033]">
-                <li className="flex gap-3">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-bold text-white" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>1</span>
-                  <span>從 D-School 出發，沿著指定路線進行觀察與寫生。</span>
+            <div className="card-bp rounded-xl p-5">
+              <p className="text-[9px] font-mono uppercase tracking-[0.25em] text-[#1C3D78]/50 mb-4">// FIELD_PROTOCOL</p>
+              <ol className="text-sm space-y-3 text-[#1C3D78] font-mono">
+                <li className="flex gap-3 items-start">
+                  <span className="w-5 h-5 rounded border border-[#1C3D78]/40 flex items-center justify-center text-[10px] flex-shrink-0 font-bold">1</span>
+                  <span className="text-xs leading-relaxed opacity-80">從 D-School 出發，沿著指定路線進行觀察與寫生。</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-bold text-white" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>2</span>
-                  <span>到達現場掃描 QR Code，領取您的專屬角色身分。</span>
+                <li className="flex gap-3 items-start">
+                  <span className="w-5 h-5 rounded border border-[#1C3D78]/40 flex items-center justify-center text-[10px] flex-shrink-0 font-bold">2</span>
+                  <span className="text-xs leading-relaxed opacity-80">掃描展場各處的 QR Code，完成空間鑑識程序領取調查身分。</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-bold text-white" style={{ background: 'linear-gradient(135deg, #1A6B5A, #2D9B83)' }}>3</span>
-                  <span>跟隨角色視角探索聚落，並參與拼貼工作坊。</span>
+                <li className="flex gap-3 items-start">
+                  <span className="w-5 h-5 rounded border border-[#1C3D78]/40 flex items-center justify-center text-[10px] flex-shrink-0 font-bold">3</span>
+                  <span className="text-xs leading-relaxed opacity-80">跟隨專屬路線探索聚落，並參與拼貼工作坊。</span>
                 </li>
               </ol>
             </div>
 
-            {/* 展場資訊 */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="card-heritage rounded-xl p-4">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>
-                  <Building2 size={18} className="text-white" />
-                </div>
-                <p className="text-xs font-bold text-[#6B4226] mb-0.5">展場A</p>
-                <p className="text-[10px] text-[#5C4033]/70 leading-tight">客家文化園區<br/>1/F驛站走廊</p>
-              </div>
-              <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #E8F5F1, #D0EDE5)' , border: '1px solid rgba(26,107,90,0.15)' }}>
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2" style={{ background: 'linear-gradient(135deg, #1A6B5A, #2D9B83)' }}>
-                  <MapPin size={18} className="text-white" />
-                </div>
-                <p className="text-xs font-bold text-[#1A6B5A] mb-0.5">展場B</p>
-                <p className="text-[10px] text-[#1A6B5A]/70 leading-tight">永春街299號外<br/>實地聚落現場</p>
-              </div>
-            </div>
-
             {/* 快捷按鈕 */}
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => setView('compare')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group border-[#8B4513]/20">
-                <History className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
-                <span className="text-sm font-bold text-[#6B4226]">探索時空對比</span>
-                <p className="text-[10px] text-[#5C4033]/40 mt-0.5">現況與合作宅提案</p>
+              <button onClick={() => setView('persona')} className="btn-bp p-4 rounded-xl text-center text-xs">
+                <User className="mx-auto mb-2" size={20}/>
+                <span className="block font-mono uppercase tracking-wider text-[10px]">啟動鑑識</span>
               </button>
-              <button onClick={() => setView('persona')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group border-[#8B4513]/20">
-                <User className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
-                <span className="text-sm font-bold text-[#6B4226]">切換觀展角色</span>
-                <p className="text-[10px] text-[#5C4033]/40 mt-0.5">開啟專屬路線</p>
+              <button onClick={() => setView('compare')} className="btn-bp-ghost p-4 rounded-xl text-center text-xs">
+                <History className="mx-auto mb-2" size={20}/>
+                <span className="block font-mono uppercase tracking-wider text-[10px]">時空對比</span>
               </button>
             </div>
-
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => setView('gallery')} className="card-heritage p-4 rounded-xl text-center hover:shadow-md transition-all group border-[#8B4513]/20">
-                <ImageIcon className="mx-auto mb-2 text-[#8B4513]/50 group-hover:text-[#8B4513] transition-colors" />
-                <span className="text-sm font-medium text-[#6B4226]">觀看寫生牆</span>
+              <button onClick={() => setView('gallery')} className="btn-bp-ghost p-4 rounded-xl text-center text-xs">
+                <ImageIcon className="mx-auto mb-2" size={20}/>
+                <span className="block font-mono uppercase tracking-wider text-[10px]">田野紀錄</span>
               </button>
-              <button onClick={() => setView('forum')} className="p-4 rounded-xl text-center hover:shadow-md transition-all group" style={{ background: 'linear-gradient(135deg, #E8F5F1, #D0EDE5)', border: '1px solid rgba(26,107,90,0.15)' }}>
-                <MessageSquare className="mx-auto mb-2 text-[#1A6B5A]/50 group-hover:text-[#1A6B5A] transition-colors" />
-                <span className="text-sm font-medium text-[#1A6B5A]">參與未來討論</span>
+              <button onClick={() => setView('forum')} className="btn-bp-ghost p-4 rounded-xl text-center text-xs">
+                <MessageSquare className="mx-auto mb-2" size={20}/>
+                <span className="block font-mono uppercase tracking-wider text-[10px]">回報討論</span>
               </button>
             </div>
           </div>
@@ -385,13 +375,12 @@ const App = () => {
         {/* --- 新增：時空對比 (Before/After Slider) 階段 --- */}
         {view === 'compare' && (
           <div className="animate-fade-in space-y-6">
-            <div className="px-2">
-              <h2 className="font-serif-tc text-xl font-bold text-[#2C1810]">聚落的過去與未來</h2>
-              <p className="text-sm text-[#5C4033]/60 mt-1">左右滑動，對比永春街現狀與生活合作宅提案的可能性。</p>
+            <div className="px-1">
+              <h2 className="font-display-tc text-xl font-black text-[#1C3D78]">DATA LOG — 地地對比</h2>
+              <p className="text-xs font-mono text-[#1C3D78]/50 mt-1 uppercase tracking-widest">LEFT: 2024 CURRENT // RIGHT: FUTURE PROPOSAL</p>
             </div>
 
-            {/* 滑桿主要容器 */}
-            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-[#8B4513]/10 bg-[#E8DFD0] group">
+            <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-xl card-bp group">
               
               {/* 底層圖片 (After / 未來提案) */}
               <img 
@@ -430,12 +419,11 @@ const App = () => {
                 aria-label="調整時間軸"
               />
               
-              {/* 標籤標示 */}
-              <div className="absolute bottom-4 left-4 bg-[#8B4513]/80 text-[#F5F0E8] text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md z-10 pointer-events-none font-bold tracking-widest">
+              <div className="absolute bottom-4 left-4 bg-[#1C3D78]/85 text-[#D4CFBC] text-[9px] px-3 py-1.5 rounded font-mono uppercase tracking-widest z-10 pointer-events-none">
                 2024 現狀
               </div>
-              <div className="absolute bottom-4 right-4 bg-[#1A6B5A]/80 text-[#E8F5F1] text-[10px] px-3 py-1.5 rounded-full backdrop-blur-md z-10 pointer-events-none font-bold tracking-widest">
-                未來合作宅
+              <div className="absolute bottom-4 right-4 bg-[#12213F]/85 text-[#D4CFBC] text-[9px] px-3 py-1.5 rounded font-mono uppercase tracking-widest z-10 pointer-events-none border border-[#E8873A]/40">
+                未來提案
               </div>
             </div>
 
@@ -560,30 +548,31 @@ const App = () => {
         {/* 寫生藝廊階段 */}
         {view === 'gallery' && (
           <div className="animate-fade-in space-y-4">
-            <h2 className="font-serif-tc text-xl font-bold px-2 text-[#2C1810]">共創寫生牆</h2>
-            <p className="text-sm text-[#5C4033]/60 px-2 mb-4">這裡展示了觀眾在移動過程中的田野記錄與畫作。</p>
-            
+            <div className="px-1">
+              <h2 className="font-display-tc text-xl font-black text-[#1C3D78]">FIELD RECORDS</h2>
+              <p className="text-[10px] font-mono text-[#1C3D78]/50 mt-1 uppercase tracking-widest">田野記錄與實地寫生筆記</p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               {artworks.length > 0 ? artworks.map(art => (
-                <div key={art.id} className="card-heritage rounded-xl overflow-hidden group">
-                  <div className="aspect-square bg-[#E8DFD0] overflow-hidden">
+                <div key={art.id} className="card-bp rounded-xl overflow-hidden group">
+                  <div className="aspect-square bg-[#B8B29C] overflow-hidden">
                     <img src={art.url} alt={art.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <div className="p-2.5">
-                    <p className="text-xs font-bold truncate text-[#2C1810]">{art.title || '無標題'}</p>
-                    <p className="text-[10px] text-[#8B4513]/50">by {art.author || '匿名觀者'}</p>
+                    <p className="text-[10px] font-mono font-bold truncate text-[#1C3D78]">{art.title || '無標題'}</p>
+                    <p className="text-[9px] font-mono text-[#1C3D78]/40 uppercase">by {art.author || 'UNKNOWN'}</p>
                   </div>
                 </div>
               )) : (
                 <>
                   {[1,2,3,4].map(i => (
-                    <div key={i} className="card-heritage rounded-xl overflow-hidden p-4">
-                      <div className="aspect-square rounded-lg mb-2 flex flex-col items-center justify-center text-[#8B4513]/30 border border-dashed border-[#8B4513]/20" style={{ backgroundColor: '#F5F0E8' }}>
-                        <ImageIcon size={24} />
-                        <span className="text-[10px] mt-1">作品整理中</span>
+                    <div key={i} className="card-bp rounded-xl overflow-hidden p-3">
+                      <div className="aspect-square rounded mb-2 flex flex-col items-center justify-center text-[#1C3D78]/25 border border-dashed border-[#1C3D78]/20" style={{ backgroundColor: '#B8B29C' }}>
+                        <ImageIcon size={20} />
+                        <span className="text-[9px] mt-1 font-mono uppercase tracking-widest">DATA_PENDING</span>
                       </div>
-                      <div className="h-3 rounded w-3/4 mb-1" style={{ backgroundColor: '#E8DFD0' }}></div>
-                      <div className="h-2 rounded w-1/2" style={{ backgroundColor: '#F5F0E8' }}></div>
+                      <div className="h-2 rounded w-3/4 mb-1" style={{ backgroundColor: '#B8B29C' }}></div>
+                      <div className="h-1.5 rounded w-1/2" style={{ backgroundColor: '#B8B29C' }}></div>
                     </div>
                   ))}
                 </>
@@ -595,43 +584,41 @@ const App = () => {
         {/* 討論版階段 */}
         {view === 'forum' && (
           <div className="animate-fade-in flex flex-col h-[75vh]">
-            <div className="px-2 mb-4">
-              <h2 className="font-serif-tc text-xl font-bold text-[#1A6B5A]">聚落想像對話框</h2>
-              <p className="text-sm text-[#5C4033]/60 mt-1">關於這裡的未來，你希望留下什麼？</p>
+            <div className="px-1 mb-4">
+              <h2 className="font-display-tc text-xl font-black text-[#1C3D78]">DATA LOG — 調查回報</h2>
+              <p className="text-[10px] font-mono text-[#1C3D78]/50 mt-1 uppercase tracking-widest">WHERE_WILL_THEY_GO // SUBMIT_YOUR_FINDINGS</p>
             </div>
-            
-            <div className="flex-1 overflow-y-auto space-y-3 px-2 pb-4">
+            <div className="flex-1 overflow-y-auto space-y-3 px-1 pb-4">
               {messages.length > 0 ? messages.map(msg => (
-                <div key={msg.id} className="card-heritage p-4 rounded-2xl animate-fade-in">
-                  <p className="text-sm text-[#2C1810] leading-relaxed">{msg.text}</p>
+                <div key={msg.id} className="card-bp p-4 rounded-xl animate-fade-in">
+                  <p className="text-sm text-[#1C3D78] font-mono leading-relaxed">{msg.text}</p>
                   <div className="flex justify-between items-center mt-3">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1A6B5A]/10 text-[#1A6B5A]">
-                      ID: {msg.authorId ? msg.authorId.substring(0, 6) : 'Anonymous'}
+                    <span className="text-[9px] px-2 py-0.5 rounded font-mono bg-[#1C3D78]/10 text-[#1C3D78]/60 uppercase tracking-widest">
+                      ID_{msg.authorId ? msg.authorId.substring(0, 6).toUpperCase() : 'ANON'}
                     </span>
-                    <span className="text-[10px] text-[#5C4033]/30">
+                    <span className="text-[9px] text-[#1C3D78]/30 font-mono">
                       {new Date(msg.timestamp).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
               )) : (
-                <div className="text-center py-20 text-[#5C4033]/30 text-sm">暫無討論，成為第一個分享想法的人吧！</div>
+                <div className="text-center py-20 text-[#1C3D78]/30 text-xs font-mono uppercase tracking-widest">NO_DATA // BE_FIRST_TO_REPORT</div>
               )}
             </div>
-
-            <div className="sticky bottom-4 p-2 rounded-2xl shadow-lg flex items-center gap-2 m-2" style={{ background: 'rgba(245,240,232,0.9)', backdropFilter: 'blur(12px)', border: '1px solid rgba(26,107,90,0.15)' }}>
-              <input 
+            <div className="sticky bottom-4 p-2 rounded-xl flex items-center gap-2 m-1 card-bp">
+              <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="輸入您的觀點..."
-                className="flex-1 bg-transparent border-none text-sm p-3 outline-none text-[#2C1810] placeholder-[#5C4033]/30"
+                placeholder="SUBMIT_FINDINGS..."
+                className="flex-1 bg-transparent border-none text-xs p-3 outline-none text-[#1C3D78] font-mono placeholder-[#1C3D78]/30"
                 onKeyPress={(e) => e.key === 'Enter' && postMessage()}
               />
-              <button 
-                onClick={postMessage} 
+              <button
+                onClick={postMessage}
                 disabled={!newMessage.trim()}
-                className={`p-3 rounded-xl shadow-md transition-all ${newMessage.trim() ? 'btn-teal' : 'bg-[#E8DFD0] text-[#5C4033]/30'}`}
+                className={`p-3 rounded-lg transition-all ${newMessage.trim() ? 'btn-bp' : 'bg-[#1C3D78]/10 text-[#1C3D78]/20'}`}
               >
-                <Send size={18} />
+                <Send size={16} />
               </button>
             </div>
           </div>

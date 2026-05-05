@@ -1,5 +1,276 @@
 @import "tailwindcss";
 
+/* ===== 299 失蹤計畫 ── Blueprint 藍圖設計系統 ===== */
+:root {
+  /* 藍圖底紙色系 */
+  --bp-paper:      #C5BFAA;   /* 主背景：老舊藍圖紙 */
+  --bp-paper-dark: #B8B29C;   /* 稍深底色 */
+  --bp-paper-light:#D4CFBC;   /* 淺色卡片 */
+  --bp-paper-worn: #A9A390;   /* 磨損深色 */
+
+  /* 藍圖墨色系（Blueprint Blue） */
+  --bp-blue:       #1C3D78;   /* 主色：深海軍藍 */
+  --bp-blue-mid:   #2B5399;   /* 線條藍 */
+  --bp-blue-light: #4570C0;   /* 標籤藍 */
+  --bp-blue-pale:  rgba(28, 61, 120, 0.15); /* 半透明填色 */
+
+  /* 警示色（警告三角、DATA CORRUPTED） */
+  --bp-warn:       #E8873A;
+  --bp-warn-dim:   rgba(232, 135, 58, 0.25);
+
+  /* 文字 */
+  --bp-ink:        #12213F;   /* 最深藍墨 */
+  --bp-ink-mid:    #1C3D78;   /* 中等藍墨 */
+  --bp-ink-dim:    rgba(28, 61, 120, 0.45); /* 淡出標籤 */
+}
+
+/* ===== 全域基底 ===== */
+body {
+  font-family: 'Space Mono', 'Noto Sans TC', monospace;
+  background-color: var(--bp-paper);
+  color: var(--bp-blue);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 等寬技術字型 */
+.font-mono-bp {
+  font-family: 'Space Mono', 'Courier New', monospace;
+}
+
+/* 粗體中文（展覽標題用） */
+.font-display-tc {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+/* ===== 藍圖底紋（網格線） ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(28, 61, 120, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 61, 120, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ===== 紙質紋理（噪聲疊加） ===== */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.12'/%3E%3C/svg%3E");
+}
+
+/* ===== z-index 修正（讓內容蓋過背景偽元素） ===== */
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== 動畫系統 ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanLine {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(100vh); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes grainDrift {
+  0%, 100% { transform: translate(0, 0); }
+  33%       { transform: translate(-1px, 1px); }
+  66%       { transform: translate(1px, -1px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-blink {
+  animation: blink 1.2s step-end infinite;
+}
+
+/* ===== 藍圖卡片 ===== */
+.card-bp {
+  background: linear-gradient(145deg, var(--bp-paper-light) 0%, var(--bp-paper) 100%);
+  border: 1px solid rgba(28, 61, 120, 0.25);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(28, 61, 120, 0.08),
+    0 2px 12px rgba(18, 33, 63, 0.08);
+  position: relative;
+}
+
+/* 藍圖卡片：角落十字標記 */
+.card-bp::before,
+.card-bp::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--bp-blue-mid);
+  border-style: solid;
+  opacity: 0.4;
+}
+.card-bp::before {
+  top: 6px; left: 6px;
+  border-width: 1px 0 0 1px;
+}
+.card-bp::after {
+  bottom: 6px; right: 6px;
+  border-width: 0 1px 1px 0;
+}
+
+/* ===== 標籤膠帶感卡片（data box） ===== */
+.card-data {
+  background: var(--bp-blue-pale);
+  border: 1px solid var(--bp-blue-mid);
+  border-left: 3px solid var(--bp-blue);
+}
+
+/* ===== 頂部標題列 ===== */
+.header-bp {
+  background: linear-gradient(to bottom, var(--bp-paper) 60%, transparent);
+  border-bottom: 1px solid rgba(28, 61, 120, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ===== 底部導覽 ===== */
+.nav-bp {
+  background: linear-gradient(to top, var(--bp-paper-dark) 70%, var(--bp-paper));
+  border-top: 1px solid rgba(28, 61, 120, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ===== 主按鈕（藍圖藍） ===== */
+.btn-bp {
+  background: var(--bp-blue);
+  color: var(--bp-paper-light);
+  border: 1px solid var(--bp-blue-mid);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.btn-bp:hover {
+  background: var(--bp-blue-mid);
+  box-shadow: 0 4px 16px rgba(28, 61, 120, 0.35);
+}
+
+/* 次要按鈕（透明） */
+.btn-bp-ghost {
+  background: transparent;
+  color: var(--bp-blue);
+  border: 1px solid rgba(28, 61, 120, 0.4);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.btn-bp-ghost:hover {
+  background: var(--bp-blue-pale);
+  border-color: var(--bp-blue);
+}
+
+/* 警示按鈕 */
+.btn-warn {
+  background: var(--bp-warn-dim);
+  color: var(--bp-warn);
+  border: 1px solid rgba(232, 135, 58, 0.4);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.08em;
+}
+
+/* ===== 訊號波形裝飾線 ===== */
+.signal-divider {
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bp-blue-mid) 0px,
+    var(--bp-blue-mid) 3px,
+    transparent 3px,
+    transparent 6px,
+    var(--bp-blue-mid) 6px,
+    var(--bp-blue-mid) 7px,
+    transparent 7px,
+    transparent 12px
+  );
+  opacity: 0.35;
+}
+
+/* ===== 條碼裝飾 ===== */
+.barcode-deco {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bp-blue) 0px,
+    var(--bp-blue) 2px,
+    transparent 2px,
+    transparent 3px,
+    var(--bp-blue) 3px,
+    var(--bp-blue) 4px,
+    transparent 4px,
+    transparent 7px,
+    var(--bp-blue) 7px,
+    var(--bp-blue) 8px,
+    transparent 8px,
+    transparent 9px
+  );
+  opacity: 0.4;
+}
+
+/* ===== 捲軸 ===== */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bp-paper-dark); }
+::-webkit-scrollbar-thumb {
+  background: var(--bp-blue-mid);
+  border-radius: 2px;
+}
+
+/* ===== 輸入框 ===== */
+.input-bp {
+  background: rgba(197, 191, 170, 0.5);
+  border: 1px solid rgba(28, 61, 120, 0.25);
+  color: var(--bp-ink);
+  font-family: 'Space Mono', monospace;
+}
+.input-bp:focus {
+  outline: none;
+  border-color: var(--bp-blue);
+  box-shadow: 0 0 0 2px rgba(28, 61, 120, 0.12);
+}
+
+/* ===== GLITCH 效果（標題裝飾） ===== */
+@keyframes glitch {
+  0%, 95%, 100% { clip-path: none; transform: none; }
+  96% {
+    clip-path: inset(20% 0 60% 0);
+    transform: translate(-3px, 0);
+  }
+  97% {
+    clip-path: inset(50% 0 20% 0);
+    transform: translate(3px, 0);
+  }
+  98% {
+    clip-path: inset(70% 0 10% 0);
+    transform: translate(-2px, 0);
+  }
+}
+.text-glitch {
+  animation: glitch 6s infinite;
+}
+
+
 /* ===== 展覽主題色彩系統 ===== */
 :root {
   /* 歷史感：老台北磚紅、土壤、舊紙 */
