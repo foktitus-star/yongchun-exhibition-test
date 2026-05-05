@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ExhibitionMap from './ExhibitionMap';
 import { 
   Calendar, 
   MapPin, 
@@ -303,7 +304,7 @@ const App = () => {
                 <h2 className="font-display-tc text-3xl font-black leading-tight mb-1" style={{ letterSpacing: '-0.02em' }}>299<br/>失蹤計畫</h2>
                 <p className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-4">299 MISSING PROJECT</p>
                 <div className="signal-divider my-4 opacity-40" />
-                <p className="text-sm opacity-75 leading-relaxed mb-5 font-mono">永春街301戶，其中299戶為達建。<br/>面對將至的都更，這299戶將何去何從？</p>
+                <p className="text-sm opacity-75 leading-relaxed mb-5 font-mono">永春街302戶，其中299戶為達建。<br/>面對將至的都更，這299戶將何去何從？</p>
                 <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                   <div className="card-data rounded-lg p-3">
                     <div className="flex items-center gap-1.5 mb-2 opacity-60"><Calendar size={12}/><span className="uppercase tracking-widest text-[9px]">展期</span></div>
@@ -323,11 +324,14 @@ const App = () => {
             <div className="card-bp rounded-xl p-5">
               <p className="text-[9px] font-mono uppercase tracking-[0.25em] text-[#1C3D78]/50 mb-4">// CASE_DATA LOG</p>
               <div className="grid grid-cols-3 gap-3 text-center font-mono">
-                <div><p className="text-2xl font-black text-[#1C3D78]">301</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">TOTAL<br/>HOUSEHOLDS</p></div>
+                <div><p className="text-2xl font-black text-[#1C3D78]">302</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">TOTAL<br/>HOUSEHOLDS</p></div>
                 <div><p className="text-2xl font-black text-[#1C3D78]">299</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">ILLEGAL<br/>STRUCTURES</p></div>
                 <div><p className="text-2xl font-black text-[#E8873A]">?</p><p className="text-[9px] uppercase tracking-widest text-[#1C3D78]/50">WHERE<br/>WILL THEY GO</p></div>
               </div>
             </div>
+
+            {/* 展場地圖 */}
+            <ExhibitionMap />
 
             {/* 參展指南 */}
             <div className="card-bp rounded-xl p-5">
