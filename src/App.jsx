@@ -65,36 +65,58 @@ if (isFirebaseSetup) {
 
 const appId = 'yongchun-street-project';
 
-// --- 模擬資料：角色故事與路線 ---
+// --- 角色資料 (由測驗結果決定) ---
 const PERSONAS = {
-  resident: {
-    title: '資深住戶：王伯伯',
-    route: '活動中心 -> 巷弄老樹 -> 遺址轉角',
-    story: '我在這裡住了四十年，看著圍牆一塊塊疊起。對我來說，移動不是困難，而是習慣了窄路中的人情味。',
-    color: 'bg-[#F5F0E8]',
-    borderColor: 'border-[#8B4513]',
-    accent: 'text-[#8B4513]',
-    tag: 'bg-[#8B4513]/10 text-[#8B4513]'
+  speedster: {
+    title: '代號：穿梭者 (外送員)',
+    trait: '移動限制：步速極快，但易受地圖誤導與死胡同困擾。',
+    route: '【專屬路線】從客家文化公園階梯捷徑快速下坡。進入永春街邊緣時，你會發現導航上的路已被圍籬封死，請尋找實體巷弄縫隙。',
+    story: '時間就是金錢。但這座聚落的紋理，從來不在 Google Map 的預測範圍內。',
+    color: 'bg-zinc-800',
+    textColor: 'text-yellow-400',
+    borderColor: 'border-yellow-500/50'
   },
-  student: {
-    title: '實習學生：小林',
-    route: 'd-school -> 臨時便道 -> 生活合作宅預定地',
-    story: '帶著捲尺與筆記本，我試圖在非正式聚落的紋理中，尋找社會住宅的另一種可能性。',
-    color: 'bg-[#E8F5F1]',
-    borderColor: 'border-[#1A6B5A]',
-    accent: 'text-[#1A6B5A]',
-    tag: 'bg-[#1A6B5A]/10 text-[#1A6B5A]'
+  restricted: {
+    title: '代號：受限者 (長者)',
+    trait: '移動限制：需依賴輔具，絕對避開階梯與碎石路，步速緩慢。',
+    route: '【專屬路線】請從客家文化公園的無障礙坡道出發。避開階梯捷徑，繞過大草皮外圍的柏油路。雖然多花 5 分鐘，但這是你唯一安全的路。',
+    story: '幾十步的階梯，對我來說就像是一座跨不過去的山。',
+    color: 'bg-zinc-800',
+    textColor: 'text-red-400',
+    borderColor: 'border-red-500/50'
   },
-  outsider: {
-    title: '好奇訪客：阿強',
-    route: '捷運站 -> 永春街入口 -> 展場核心',
-    story: '第一次踏入這裡，導航似乎失靈了。這種「迷路感」正是聚落最迷人的屏障。',
-    color: 'bg-[#EDE8F5]',
-    borderColor: 'border-[#5B4A8A]',
-    accent: 'text-[#5B4A8A]',
-    tag: 'bg-[#5B4A8A]/10 text-[#5B4A8A]'
+  heavy: {
+    title: '代號：負重者 (調查員/器材組)',
+    trait: '移動限制：需要寬闊路面與較大轉彎半徑，路緣石高低差是最大天敵。',
+    route: '【專屬路線】沿著公園主幹道直行。遇到路口請注意路緣石高低差。無法穿越樹林小徑，請沿著公園外側實體人行道前往永春街。',
+    story: '推著沉重的器材，這座城市的每一個幾公分高的台階，都成了阻礙。',
+    color: 'bg-zinc-800',
+    textColor: 'text-blue-400',
+    borderColor: 'border-blue-500/50'
   }
 };
+
+// --- 測驗題目 ---
+const QUIZ_QUESTIONS = [
+  {
+    id: 1,
+    question: '當你遇到前方有一道未知的施工圍籬時，你的直覺反應是？',
+    options: [
+      { label: 'A', text: '快速尋找旁邊的狹窄小巷繞過去。', score: 1 },
+      { label: 'B', text: '停下腳步，尋找平緩且無障礙的退路。', score: 2 },
+      { label: 'C', text: '煩躁地推著手邊的重物，尋找寬敞的替代道路。', score: 3 },
+    ]
+  },
+  {
+    id: 2,
+    question: '你目前的身體與裝備狀態最接近下列何者？',
+    options: [
+      { label: 'A', text: '輕裝上陣，靈活敏捷。', score: 1 },
+      { label: 'B', text: '身體略顯疲憊，需要依賴輔助或平坦路面。', score: 2 },
+      { label: 'C', text: '帶著沉重背包或推車，需要較大的迴轉空間。', score: 3 },
+    ]
+  }
+];
 
 const App = () => {
   const [view, setView] = useState('landing'); // landing, persona, gallery, forum, compare
@@ -104,8 +126,41 @@ const App = () => {
   const [newMessage, setNewMessage] = useState('');
   const [artworks, setArtworks] = useState(MOCK_ARTWORKS);
   
-  // 新增：控制時間滑桿的狀態 (0 到 100)
+  // 時間滑桿
   const [sliderPosition, setSliderPosition] = useState(50);
+
+  // 測驗狀態：0=未開始, 1-2=題目, 3=分析中, 4=顯示結果
+  const [quizStep, setQuizStep] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState([]);
+
+  // 測驗：選擇選項
+  const handleQuizAnswer = (score) => {
+    const newAnswers = [...quizAnswers, score];
+    setQuizAnswers(newAnswers);
+    if (quizStep < QUIZ_QUESTIONS.length) {
+      setQuizStep(quizStep + 1);
+    }
+    if (quizStep === QUIZ_QUESTIONS.length) {
+      // 最後一題答完 → 進入分析中畫面
+      setQuizStep(3);
+      setTimeout(() => {
+        const total = newAnswers.reduce((a, b) => a + b, 0);
+        let persona;
+        if (total <= 3) persona = PERSONAS.speedster;
+        else if (total === 4) persona = PERSONAS.restricted;
+        else persona = PERSONAS.heavy;
+        setActivePersona(persona);
+        setQuizStep(4);
+      }, 1500);
+    }
+  };
+
+  // 重置測驗
+  const resetQuiz = () => {
+    setQuizStep(0);
+    setQuizAnswers([]);
+    setActivePersona(null);
+  };
 
   // 1. 初始化 Auth
   useEffect(() => {
@@ -399,52 +454,103 @@ const App = () => {
           </div>
         )}
 
-        {/* 角色導覽階段 */}
+        {/* 角色導覽階段 — 空間適應性鑑識程序 */}
         {view === 'persona' && (
           <div className="animate-fade-in space-y-4">
-            {!activePersona ? (
-              <div className="text-center py-10 card-heritage rounded-2xl p-8">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'linear-gradient(135deg, #E8DFD0, #F5F0E8)', border: '2px solid rgba(139,69,19,0.2)' }}>
-                  <User className="text-[#8B4513]" />
+
+            {/* Step 0：測驗入口 */}
+            {quizStep === 0 && (
+              <div className="rounded-2xl border border-zinc-700 bg-zinc-900 p-8 text-center space-y-6">
+                <div className="space-y-1">
+                  <p className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-mono">299 失蹤計畫 // 身分鑑識模組</p>
+                  <h2 className="text-xl font-bold font-mono text-yellow-400 tracking-wider">空間適應性鑑識程序</h2>
+                  <p className="text-xs text-zinc-400 leading-relaxed pt-2">根據你的移動模式與身體狀態，系統將分配對應的調查身分。<br/>共 2 題，請誠實作答。</p>
                 </div>
-                <h3 className="font-serif-tc font-bold text-lg text-[#2C1810]">準備好開始您的旅程了嗎？</h3>
-                <p className="text-[#5C4033]/60 text-sm mt-2 mb-6">請掃描展場各處的 QR Code 以領取身分。</p>
-                <div className="space-y-3">
-                  <p className="text-[10px] text-[#8B4513]/50 uppercase tracking-widest font-bold">快速預覽模式</p>
-                  <div className="flex flex-wrap justify-center gap-2">
-                    <button onClick={() => setActivePersona(PERSONAS.resident)} className="px-4 py-1.5 bg-[#8B4513]/10 text-[#8B4513] text-xs rounded-full border border-[#8B4513]/20 hover:bg-[#8B4513]/20 transition-colors">王伯伯</button>
-                    <button onClick={() => setActivePersona(PERSONAS.student)} className="px-4 py-1.5 bg-[#1A6B5A]/10 text-[#1A6B5A] text-xs rounded-full border border-[#1A6B5A]/20 hover:bg-[#1A6B5A]/20 transition-colors">小林</button>
-                    <button onClick={() => setActivePersona(PERSONAS.outsider)} className="px-4 py-1.5 bg-[#5B4A8A]/10 text-[#5B4A8A] text-xs rounded-full border border-[#5B4A8A]/20 hover:bg-[#5B4A8A]/20 transition-colors">阿強</button>
-                  </div>
-                </div>
+                <button
+                  onClick={() => setQuizStep(1)}
+                  className="w-full py-4 rounded-xl border border-yellow-500/50 bg-yellow-500/10 text-yellow-400 font-bold font-mono text-sm uppercase tracking-widest hover:bg-yellow-500/20 transition-all"
+                >
+                  ▶ 啟動鑑識程序
+                </button>
               </div>
-            ) : (
-              <div className={`rounded-2xl border-2 ${activePersona.borderColor} overflow-hidden shadow-md animate-fade-in`} style={{ backgroundColor: '#FFFCF7' }}>
-                <div className={`${activePersona.color} p-6`}>
-                  <div className="flex justify-between items-start mb-4">
-                    <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider ${activePersona.tag}`}>已解鎖角色</span>
-                    <button onClick={() => setActivePersona(null)} className="text-[#5C4033]/50 hover:text-[#5C4033] text-sm font-medium transition-colors">切換身分</button>
-                  </div>
-                  <h2 className={`font-serif-tc text-2xl font-black mb-2 ${activePersona.accent}`}>{activePersona.title}</h2>
-                  <p className="text-sm leading-relaxed italic text-[#5C4033]/80">「{activePersona.story}」</p>
-                </div>
-                <div className="p-6 space-y-6">
-                  <section>
-                    <h4 className="text-xs font-bold text-[#5C4033]/50 uppercase mb-3 flex items-center gap-1">
-                      <Navigation size={14} /> 專屬移動路線
-                    </h4>
-                    <div className="p-4 rounded-xl flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #F5F0E8, #E8DFD0)', border: '1px solid rgba(139,69,19,0.1)' }}>
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #8B4513, #C4956A)' }}>
-                        <MapPin size={16} />
-                      </div>
-                      <p className="text-sm font-bold text-[#6B4226] leading-tight">{activePersona.route}</p>
+            )}
+
+            {/* Step 1–2：測驗題目 */}
+            {(quizStep === 1 || quizStep === 2) && (() => {
+              const q = QUIZ_QUESTIONS[quizStep - 1];
+              return (
+                <div className="rounded-2xl border border-zinc-700 bg-zinc-900 p-6 space-y-5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest">Q{quizStep} / {QUIZ_QUESTIONS.length}</span>
+                    <div className="flex gap-1">
+                      {QUIZ_QUESTIONS.map((_, i) => (
+                        <div key={i} className={`w-6 h-1 rounded-full transition-colors ${i < quizStep ? 'bg-yellow-400' : 'bg-zinc-700'}`} />
+                      ))}
                     </div>
-                  </section>
-                  
-                  <div className="p-10 rounded-2xl border border-dashed text-sm text-center" style={{ borderColor: 'rgba(139,69,19,0.2)', backgroundColor: '#F5F0E8', color: '#5C4033' }}>
-                    <Navigation className="mx-auto mb-2 opacity-20" size={32} />
-                    <span className="opacity-50">互動地圖載入中...</span>
                   </div>
+                  <p className="text-sm text-zinc-100 font-mono leading-relaxed">{q.question}</p>
+                  <div className="space-y-3">
+                    {q.options.map((opt) => (
+                      <button
+                        key={opt.label}
+                        onClick={() => handleQuizAnswer(opt.score)}
+                        className="w-full text-left p-4 rounded-xl bg-zinc-900 border border-zinc-700 hover:border-yellow-500 hover:bg-zinc-800 transition-all group"
+                      >
+                        <span className="text-[10px] font-bold font-mono text-yellow-500/70 group-hover:text-yellow-400 block mb-1 uppercase tracking-widest">[{opt.label}]</span>
+                        <span className="text-xs text-zinc-300 leading-relaxed">{opt.text}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Step 3：分析中 Loading */}
+            {quizStep === 3 && (
+              <div className="rounded-2xl border border-zinc-700 bg-zinc-900 p-16 flex flex-col items-center gap-5">
+                <div className="w-10 h-10 rounded-full border-2 border-yellow-500 border-t-transparent animate-spin" />
+                <p className="text-xs text-yellow-400 font-mono tracking-widest uppercase">ANALYZING_MOBILITY_PATTERN...</p>
+                <p className="text-[10px] text-zinc-600 font-mono">比對移動資料庫中，請稍候</p>
+              </div>
+            )}
+
+            {/* Step 4：結果顯示 */}
+            {quizStep === 4 && activePersona && (
+              <div className={`rounded-2xl border ${activePersona.borderColor} overflow-hidden animate-fade-in`}>
+                {/* 標頭 */}
+                <div className={`${activePersona.color} p-6 space-y-3`}>
+                  <div className="flex justify-between items-start">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-zinc-400">// 身分鑑識完成</span>
+                    <button onClick={resetQuiz} className="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono transition-colors">[ 重新鑑識 ]</button>
+                  </div>
+                  <h2 className={`font-mono text-xl font-black ${activePersona.textColor} tracking-wider`}>{activePersona.title}</h2>
+                  <p className="text-xs text-zinc-400 italic leading-relaxed">「{activePersona.story}」</p>
+                </div>
+
+                <div className="p-5 space-y-5 bg-zinc-950">
+                  {/* 移動限制標籤 */}
+                  <div>
+                    <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">// 移動限制</p>
+                    <p className={`text-sm font-mono font-bold ${activePersona.textColor} border-b-2 pb-1`} style={{ borderColor: 'currentColor' }}>
+                      {activePersona.trait}
+                    </p>
+                  </div>
+
+                  {/* 機密任務指示區塊 */}
+                  <div className="rounded-xl border border-dashed border-zinc-700 bg-zinc-900 p-4 space-y-2">
+                    <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest flex items-center gap-1">
+                      <span className="text-yellow-500">▍</span> 機密任務指示
+                    </p>
+                    <p className="text-xs text-zinc-300 font-mono leading-relaxed">{activePersona.route}</p>
+                  </div>
+
+                  {/* 前往討論 */}
+                  <button
+                    onClick={() => setView('forum')}
+                    className="w-full py-3 rounded-xl border border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200 font-mono text-xs uppercase tracking-widest transition-all"
+                  >
+                    前往討論版回報調查結果 →
+                  </button>
                 </div>
               </div>
             )}
