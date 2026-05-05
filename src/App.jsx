@@ -276,7 +276,7 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen pb-20" style={{ backgroundColor: '#C5BFAA', color: '#1C3D78' }}>
+    <div className="min-h-screen pb-20" style={{ color: '#1C3D78' }}>
       {/* Header */}
       <header className="header-bp sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">

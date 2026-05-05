@@ -52,9 +52,17 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(28, 61, 120, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28, 61, 120, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
+    /* 細格線 */
+    linear-gradient(rgba(28, 61, 120, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 61, 120, 0.10) 1px, transparent 1px),
+    /* 粗格線（每 5 格一條） */
+    linear-gradient(rgba(28, 61, 120, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 61, 120, 0.18) 1px, transparent 1px);
+  background-size:
+    20px 20px,
+    20px 20px,
+    100px 100px,
+    100px 100px;
 }
 
 /* ===== 紙質紋理（噪聲疊加） ===== */
