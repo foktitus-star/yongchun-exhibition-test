@@ -128,13 +128,31 @@ export default function ExhibitionMap() {
         </div>
       </div>
 
-      {/* 地圖本體（藍圖底色濾鏡） */}
+      {/* 地圖本體 */}
       <div className="relative" style={{ height: '220px' }}>
-        <div ref={containerRef} style={{ width: '100%', height: '100%', filter: 'sepia(0.3) hue-rotate(180deg) saturate(0.6) brightness(0.92)' }} />
-        {/* 邊框覆蓋層（角落十字） */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'linear-gradient(to bottom, rgba(197,191,170,0.15) 0%, transparent 20%, transparent 80%, rgba(197,191,170,0.15) 100%)'
-        }} />
+        {/* 
+          重要：filter 必須只套用在 tile 圖層，不能套用在整個地圖容器。
+          否則 Leaflet 的 absolute 定位會建立新的 stacking context 造成圖標偏移。
+          透過注入 <style> 只針對此地圖實例的 tile-pane 套用色調。
+        */}
+        <style>{`
+          .bp-map-container .leaflet-tile-pane {
+            filter: sepia(0.25) hue-rotate(180deg) saturate(0.55) brightness(0.9);
+          }
+        `}</style>
+        <div
+          ref={containerRef}
+          className="bp-map-container"
+          style={{ width: '100%', height: '100%' }}
+        />
+        {/* 上下漸層遮罩（純視覺，不影響互動） */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(197,191,170,0.2) 0%, transparent 18%, transparent 82%, rgba(197,191,170,0.2) 100%)',
+          }}
+        />
       </div>
 
       {/* 底部地址列表 */}
